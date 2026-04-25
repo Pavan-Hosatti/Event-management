@@ -50,7 +50,7 @@ const fetchNotifications = async () => {
     if (!token) return;
     
     // Use the real notification endpoint
-    const response = await fetch('http://localhost:5000/api/notifications', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/notifications`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -148,7 +148,7 @@ const fetchNotifications = async () => {
   try {
     const token = localStorage.getItem('token');
     
-    await fetch(`http://localhost:5000/api/student/notifications/${id}/read`, {
+    await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/student/notifications/${id}/read`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`

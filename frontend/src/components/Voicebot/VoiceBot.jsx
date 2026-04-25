@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import ChatHistory from './ChatHistory';
 import api from '../../utilis/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}`;
 
 const VoiceBot = () => {
   const { t } = useTranslation();

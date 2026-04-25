@@ -398,7 +398,7 @@ const StudentQRCodeModal = ({ registration, event, onClose }) => {
       try {
         const token = localStorage.getItem('token');
         const res = await fetch(
-          `http://localhost:5000/api/qr-codes/student/event/${event._id}`,
+          `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/qr-codes/student/event/${event._id}`,
           { headers: { 'Authorization': `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -582,7 +582,7 @@ const fetchDashboardData = async (silent = false) => {
     console.log('👤 User:', userData.name, userData.id);
 
     // Fetch all events
-    const eventsRes = await fetch('http://localhost:5000/api/events');
+    const eventsRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events`);
     const eventsData = await eventsRes.json();
     const events = eventsData.events || eventsData.data || eventsData || [];
     setAllEvents(events);
@@ -593,7 +593,7 @@ const fetchDashboardData = async (silent = false) => {
     if (userData.id) {
       try {
         const regRes = await fetch(
-          `http://localhost:5000/api/events/registrations/user/${userData.id}`, 
+          `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events/registrations/user/${userData.id}`, 
           {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -708,7 +708,7 @@ const fetchNotifications = async () => {
     
     if (!token) return;
     
-    const response = await fetch('http://localhost:5000/api/student/notifications', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/student/notifications`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -815,7 +815,7 @@ const MyQRCodesModal = ({ registrations, events, onClose }) => {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       
       // Try to get QR code from backend
-      const response = await fetch(`http://localhost:5000/api/student/events/${eventId}/qr-code`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/student/events/${eventId}/qr-code`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -894,7 +894,7 @@ const handleDownloadCertificate = async (event) => {
 
     // Download certificate
     const response = await fetch(
-      `http://localhost:5000/api/events/${event._id}/registrations/${registration._id}/certificate/download`,
+      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events/${event._id}/registrations/${registration._id}/certificate/download`,
       {
         method: 'GET',
         headers: {
@@ -1168,7 +1168,7 @@ const handleSubmitFeedback = async (feedbackData) => {
 
     // Submit feedback
     const response = await fetch(
-      `http://localhost:5000/api/events/${selectedEvent._id}/feedback`,
+      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events/${selectedEvent._id}/feedback`,
       {
         method: 'POST',
         headers: {
@@ -2054,7 +2054,7 @@ const handleSubmitFeedback = async (feedbackData) => {
                     // ✅ TRY 2: Fetch from backend
                     const token = localStorage.getItem('token');
                     const response = await fetch(
-                      `http://localhost:5000/api/qr-codes/student/event/${event._id}`,
+                      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/qr-codes/student/event/${event._id}`,
                       {
                         method: 'GET',
                         headers: {
@@ -2361,7 +2361,7 @@ const handleSubmitFeedback = async (feedbackData) => {
             onClick={async () => {
               try {
                 const token = localStorage.getItem('token');
-                await fetch('http://localhost:5000/api/student/notifications', {
+                await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/student/notifications`, {
                   method: 'DELETE',
                   headers: {
                     'Authorization': `Bearer ${token}`
@@ -2424,7 +2424,7 @@ const handleSubmitFeedback = async (feedbackData) => {
                         onClick={async () => {
                           try {
                             const token = localStorage.getItem('token');
-                            await fetch(`http://localhost:5000/api/student/notifications/${notif._id || notif.id}/read`, {
+                            await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/student/notifications/${notif._id || notif.id}/read`, {
                               method: 'PATCH',
                               headers: {
                                 'Authorization': `Bearer ${token}`

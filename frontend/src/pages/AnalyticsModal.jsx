@@ -34,9 +34,9 @@ const AnalyticsModal = ({ event, onClose }) => {
 
       // Try different endpoints
       const endpoints = [
-        `http://localhost:5000/api/admin/analytics?range=${timeRange}${event ? `&eventId=${event._id}` : ''}`,
-        `http://localhost:5000/api/admin/reports?range=${timeRange}${event ? `&eventId=${event._id}` : ''}`,
-        `http://localhost:5000/api/admin/analytics/reports?range=${timeRange}${event ? `&eventId=${event._id}` : ''}`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/analytics?range=${timeRange}${event ? `&eventId=${event._id}` : ''}`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/reports?range=${timeRange}${event ? `&eventId=${event._id}` : ''}`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/analytics/reports?range=${timeRange}${event ? `&eventId=${event._id}` : ''}`
       ];
       
       let response;

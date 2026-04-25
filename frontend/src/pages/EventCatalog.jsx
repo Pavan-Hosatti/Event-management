@@ -10,7 +10,7 @@ import {
     Building2, Tag, Wifi, WifiOff, DollarSign, User
 } from 'lucide-react';
 
-// REMOVE: const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// REMOVE: const API_BASE_URL = import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}`;
 
 // ========== MOCK DATA (fallback) ==========
 const MOCK_EVENTS = [
@@ -106,7 +106,7 @@ useEffect(() => {
       console.log('🔄 Fetching events from API...');
       
       // ✅ FIX: Use correct endpoint
-      const eventsResponse = await fetch('http://localhost:5000/api/events', {
+      const eventsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -133,7 +133,7 @@ useEffect(() => {
 
       // Fetch clubs (optional)
       try {
-        const clubsResponse = await fetch('http://localhost:5000/api/events/clubs');
+        const clubsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events/clubs`);
         const clubsData = await clubsResponse.json();
         setClubs(clubsData.clubs || clubsData.data || []);
       } catch (err) {
@@ -145,7 +145,7 @@ useEffect(() => {
       // ✅ Fetch user registrations if logged in
       if (USER_ID && USER_ID !== 'student123') {
         try {
-          const regResponse = await fetch(`http://localhost:5000/api/events/registrations/user/${USER_ID}`, {
+          const regResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events/registrations/user/${USER_ID}`, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -276,7 +276,7 @@ const handleRegister = async (event) => {
     
     console.log('📝 Registration data:', registrationData);
     
-    const response = await fetch(`http://localhost:5000/api/events/${event._id}/register`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/events/${event._id}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

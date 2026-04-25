@@ -33,7 +33,7 @@ const fetchReports = async () => {
     
     // Try to get real data from backend
     const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:5000/api/admin/reports?range=${timeRange}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/reports?range=${timeRange}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

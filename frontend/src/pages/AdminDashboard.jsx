@@ -552,7 +552,7 @@ const AttendanceModal = ({ event, onClose }) => {
  const toggleAttendance = async (registrationId, currentlyAttended) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:5000/api/admin/events/${event._id}/attendance`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/events/${event._id}/attendance`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -997,7 +997,7 @@ const handleExportEventData = async (eventId) => {
     
     const token = localStorage.getItem('token');
     // Add eventId as query parameter
-    const response = await fetch(`http://localhost:5000/api/admin/export?type=registrations&eventId=${eventId}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/export?type=registrations&eventId=${eventId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
@@ -1034,7 +1034,7 @@ const handleExportAllData = async () => {
     
     const token = localStorage.getItem('token');
     // No eventId parameter = all events
-    const response = await fetch('http://localhost:5000/api/admin/export?type=registrations', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/export?type=registrations`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
@@ -1086,7 +1086,7 @@ const fetchEventFeedback = async (eventId) => {
       return;
     }
     
-    const response = await fetch(`http://localhost:5000/api/admin/events/${eventId}/feedback`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/events/${eventId}/feedback`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -1163,7 +1163,7 @@ const handleGenerateQRCodes = async (eventId) => {
       return;
     }
     
-    const response = await fetch(`http://localhost:5000/api/qr-codes/event/${eventId}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/qr-codes/event/${eventId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1281,7 +1281,7 @@ const fetchDashboardData = async () => {
     let attendanceData = { chartData: [] };
     
     try {
-      const statsRes = await fetch('http://localhost:5000/api/admin/stats', { headers });
+      const statsRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/stats`, { headers });
       if (statsRes.ok) {
         statsData = await statsRes.json();
       }
@@ -1290,7 +1290,7 @@ const fetchDashboardData = async () => {
     }
     
     try {
-      const eventsRes = await fetch('http://localhost:5000/api/admin/events', { headers });
+      const eventsRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/events`, { headers });
       if (eventsRes.ok) {
         eventsData = await eventsRes.json();
       }
@@ -1299,7 +1299,7 @@ const fetchDashboardData = async () => {
     }
     
     try {
-      const attendanceRes = await fetch('http://localhost:5000/api/admin/attendance-history', { headers });
+      const attendanceRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/attendance-history`, { headers });
       if (attendanceRes.ok) {
         attendanceData = await attendanceRes.json();
       }
@@ -1389,7 +1389,7 @@ const getMockEvents = () => [
 
  const handleExportData = async (eventId = '') => {
   try {
-    let url = 'http://localhost:5000/api/admin/export-data';
+    let url = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/export-data`;
     
     // If eventId is provided, add it as query parameter
     if (eventId) {
@@ -1476,13 +1476,13 @@ const handleSendNotificationWithEvent = async (event, message) => {
     // WORKING ENDPOINTS - Use these exact ones
     const endpoints = [
       // 1. Simple test route (NO auth required)
-      `http://localhost:5000/api/admin/notifications-test`,
+      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/notifications-test`,
       // 2. Send notifications route (requires auth)
-      `http://localhost:5000/api/admin/send-notifications`,
+      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/send-notifications`,
       // 3. Alternative route
-      `http://localhost:5000/api/admin/notify`,
+      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/notify`,
       // 4. Event-specific test route
-      `http://localhost:5000/api/admin/events/${event._id}/notifications-test`
+      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/events/${event._id}/notifications-test`
     ];
     
     let response;
