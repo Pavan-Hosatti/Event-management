@@ -30,60 +30,59 @@ if (!fs.existsSync(certificatesDir)) {
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:5001';
 console.log(`🤖 ML Service URL: ${ML_SERVICE_URL}`);
 
-// 🔧 COMPREHENSIVE CORS CONFIGURATION
-// Dynamically build allowed origins from FRONTEND_URL env var + known URLs
-const buildAllowedOrigins = () => {
-    const origins = [
-        // Production Vercel URLs
-        'https://event-hub-nine-neon.vercel.app',
-        'https://event-lp1lw933e-pavan-hosattis-projects.vercel.app',
-        // Local development
-        'http://localhost:5173',
-        'http://localhost:5175',
-        'http://localhost:5174',
-        'http://localhost:5001',
-        'http://127.0.0.1:5173',
-        'http://127.0.0.1:5174',
-        'http://127.0.0.1:5001',
-    ];
-    // Add any origins from FRONTEND_URL env var (comma-separated)
-    if (process.env.FRONTEND_URL) {
-        process.env.FRONTEND_URL.split(',').forEach(url => {
-            const trimmed = url.trim();
-            if (trimmed && !origins.includes(trimmed)) {
-                origins.push(trimmed);
-            }
-        });
-    }
-    if (process.env.ML_SERVICE_URL) {
-        origins.push(process.env.ML_SERVICE_URL);
-    }
-    return origins;
-};
-const allowedOrigins = buildAllowedOrigins();
+// 🔧 BULLETPROOF CORS CONFIGURATION
+const allowedOrigins = [
+    // Production Vercel URLs
+    'https://event-hub-nine-neon.vercel.app',
+    'https://event-lp1lw933e-pavan-hosattis-projects.vercel.app',
+    // Local development
+    'http://localhost:5173',
+    'http://localhost:5175',
+    'http://localhost:5174',
+    'http://localhost:5001',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    'http://127.0.0.1:5001',
+];
+// Add any origins from FRONTEND_URL env var (comma-separated)
+if (process.env.FRONTEND_URL) {
+    process.env.FRONTEND_URL.split(',').forEach(url => {
+        const trimmed = url.trim();
+        if (trimmed && !allowedOrigins.includes(trimmed)) {
+            allowedOrigins.push(trimmed);
+        }
+    });
+}
 console.log('🌐 Allowed CORS origins:', allowedOrigins);
 
-const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+// ✅ MANUAL CORS middleware — handles preflight (OPTIONS) explicitly
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    // Allow any Vercel preview deploy URL or known origins
+    const isAllowed = !origin || 
+        allowedOrigins.includes(origin) || 
+        origin.endsWith('.vercel.app') ||
+        origin.includes('localhost');
+    
+    if (isAllowed && origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Range, X-Content-Range');
+    res.setHeader('Access-Control-Max-Age', '86400');
 
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.warn(`⚠️  CORS blocked origin: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Content-Range', 'X-Content-Range'],
-    maxAge: 86400
-};
+    // Handle preflight immediately
+    if (req.method === 'OPTIONS') {
+        return res.status(204).end();
+    }
+    next();
+});
 
 // ✅ Middleware setup
-app.use(cors(corsOptions));
+app.use(cors({ origin: true, credentials: true }));
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
