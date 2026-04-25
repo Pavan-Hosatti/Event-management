@@ -31,22 +31,37 @@ const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:5001';
 console.log(`🤖 ML Service URL: ${ML_SERVICE_URL}`);
 
 // 🔧 COMPREHENSIVE CORS CONFIGURATION
-const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? [
-        'https://farm2-market-ashen.vercel.app',
-        'https://farm2-market-git-main-pavan-hosattis-projects.vercel.app',
-        'https://farm2-market-4o7xt0kgz-pavan-hosattis-projects.vercel.app',
-        process.env.ML_SERVICE_URL
-      ].filter(Boolean)
-    : [
+// Dynamically build allowed origins from FRONTEND_URL env var + known URLs
+const buildAllowedOrigins = () => {
+    const origins = [
+        // Production Vercel URLs
+        'https://event-hub-nine-neon.vercel.app',
+        'https://event-lp1lw933e-pavan-hosattis-projects.vercel.app',
+        // Local development
         'http://localhost:5173',
         'http://localhost:5175',
         'http://localhost:5174',
         'http://localhost:5001',
         'http://127.0.0.1:5173',
         'http://127.0.0.1:5174',
-        'http://127.0.0.1:5001'
-      ];
+        'http://127.0.0.1:5001',
+    ];
+    // Add any origins from FRONTEND_URL env var (comma-separated)
+    if (process.env.FRONTEND_URL) {
+        process.env.FRONTEND_URL.split(',').forEach(url => {
+            const trimmed = url.trim();
+            if (trimmed && !origins.includes(trimmed)) {
+                origins.push(trimmed);
+            }
+        });
+    }
+    if (process.env.ML_SERVICE_URL) {
+        origins.push(process.env.ML_SERVICE_URL);
+    }
+    return origins;
+};
+const allowedOrigins = buildAllowedOrigins();
+console.log('🌐 Allowed CORS origins:', allowedOrigins);
 
 const corsOptions = {
     origin: function (origin, callback) {
